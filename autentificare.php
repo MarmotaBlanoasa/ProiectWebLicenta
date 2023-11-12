@@ -1,6 +1,6 @@
 <?php
 // Start a new session
-global $con;
+global $mysqli;
 session_start();
 
 // Include database connection settings
@@ -13,7 +13,7 @@ if (!isset($_POST['email'], $_POST['password'])) {
 }
 
 // Prepare a SQL statement to prevent SQL injection
-if ($stmt = $con->prepare('SELECT ID_Administrator, Parola FROM administrator WHERE Email = ?')) {
+if ($stmt = $mysqli->prepare('SELECT ID_Administrator, Parola FROM administrator WHERE Email = ?')) {
     // Bind parameters (s = string, i = int, b = blob, etc.); in our case, email is a string
     $stmt->bind_param('s', $_POST['email']);
     $stmt->execute();
@@ -52,4 +52,4 @@ if ($stmt = $con->prepare('SELECT ID_Administrator, Parola FROM administrator WH
     exit('Could not prepare the statement!');
 }
 
-$con->close();
+$mysqli->close();
