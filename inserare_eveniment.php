@@ -8,12 +8,14 @@ if (isset($_POST['submit'])) {
     $Data_Finish = htmlentities($_POST['Data_Finish'], ENT_QUOTES);
     $Locatie = htmlentities($_POST['Locatie'], ENT_QUOTES);
     $Numar_Participant_Maxim = htmlentities($_POST['Numar_Participant_Maxim'], ENT_QUOTES);
-
+    $count_query = (int)"SELECT COUNT(*) FROM eveniment";
+    echo $count_query;
     if ($Nume_Eveniment == '' || $Descriere == '' || $Data_Start == '' || $Data_Finish == '' || $Locatie == '' || $Numar_Participant_Maxim == '') {
         $error = 'ERROR: Campuri goale!';
     } else {
-        if ($stmt = $mysqli->prepare("INSERT INTO eveniment(Nume_Eveniment, Descriere, Data_Start, Data_Finish,Locatie,Numar_Participant_Maxim) VALUES (?,?,?,?,?,?)")) {
-            $stmt->bind_param("sssssi", $Nume_Eveniment, $Descriere, $Data_Start, $Data_Finish, $Locatie, $Numar_Participant_Maxim);
+        if ($stmt = $mysqli->prepare("INSERT INTO eveniment(ID_Eveniment,Nume_Eveniment, Descriere, Data_Start, Data_Finish,Locatie,Numar_Participant_Maxim) VALUES (?,?,?,?,?,?)")) {
+//            $id = $count_query + 1;
+            $stmt->bind_param("isssssi", $id, $Nume_Eveniment, $Descriere, $Data_Start, $Data_Finish, $Locatie, $Numar_Participant_Maxim);
             $stmt->execute();
             $stmt->close();
         } else {
@@ -43,8 +45,8 @@ $mysqli->close();
         <div>
             <strong> Nume Eveniment: </strong> <input type="text" name="Nume_Eveniment" value="" /> <br />
             <strong> Descriere: </strong> <input type="text" name="Descriere" value="" /> <br />
-            <strong> Data Start: </strong> <input type="text" name="Data_Start" value="" /> <br />
-            <strong> Data Finish: </strong> <input type="text" name="Data_Finish" value="" /> <br />
+            <strong> Data Start: </strong> <input type="date" name="Data_Start" value="" /> <br />
+            <strong> Data Finish: </strong> <input type="date" name="Data_Finish" value="" /> <br />
             <strong> Locatie: </strong> <input type="text" name="Locatie" value="" /> <br />
             <strong> Numar Participant Maxim: </strong> <input type="number" name="Numar_Participant_Maxim" value="" /> <br />
             <br />
