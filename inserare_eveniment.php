@@ -1,5 +1,6 @@
 <?php
 include("conectare.php");
+require ("checkLogin.php");
 $error = '';
 if (isset($_POST['submit'])) {
     $Nume_Eveniment = htmlentities($_POST['Nume_Eveniment'], ENT_QUOTES);
@@ -13,7 +14,7 @@ if (isset($_POST['submit'])) {
     if ($Nume_Eveniment == '' || $Descriere == '' || $Data_Start == '' || $Data_Finish == '' || $Locatie == '' || $Numar_Participant_Maxim == '') {
         $error = 'ERROR: Campuri goale!';
     } else {
-        if ($stmt = $mysqli->prepare("INSERT INTO eveniment(ID_Eveniment,Nume_Eveniment, Descriere, Data_Start, Data_Finish,Locatie,Numar_Participant_Maxim) VALUES (?,?,?,?,?,?)")) {
+        if ($stmt = $mysqli->prepare("INSERT INTO eveniment(ID_Eveniment,Nume_Eveniment, Descriere, Data_Start, Data_Finish,Locatie,Numar_Participant_Maxim) VALUES (?,?,?,?,?,?, ?)")) {
 //            $id = $count_query + 1;
             $stmt->bind_param("isssssi", $id, $Nume_Eveniment, $Descriere, $Data_Start, $Data_Finish, $Locatie, $Numar_Participant_Maxim);
             $stmt->execute();

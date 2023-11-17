@@ -1,12 +1,15 @@
+<?php
+session_start();
+$loggedIn = isset($_SESSION["loggedin"]);
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <title>Vizualizare Inregistrari</title>
+        <title>Vizualizare Parteneri</title>
         <meta http-equiv="Content-Type" content="text/html", charset="utf-8"/>       
     </head>
     <body>
-        <h1>Inregistrarile din tabela participant</h1>
-        <p><b>Toate inregistrarile din participant</b></p>
+        <h1>Vizualizare speaker</h1>
         <?php
             include("conectare.php");
             if ($result = $mysqli->query("SELECT * FROM speaker ORDER BY ID_Speaker "))
@@ -33,10 +36,11 @@
                             echo "<td>" . $row->Email . "</td>";
                             echo "<td>" . $row->Telefon . "</td>";
                             echo "<td>" . $row->Bio . "</td>";
-                        
-                            echo "<td><a href='modificare_speaker.php?ID_Speaker=" . $row->ID_Speaker . "'>Modificare</a></td>";
-                            echo "<td><a href='stergere_speaker.php?ID_Speaker=" .$row->ID_Speaker . "'>Stergere</a></td>";
-                            echo "</tr>";                
+                            if ($loggedIn){
+                                echo "<td><a href='modificare_speaker.php?ID_Speaker=" . $row->ID_Speaker . "'>Modificare</a></td>";
+                                echo "<td><a href='stergere_speaker.php?ID_Speaker=" .$row->ID_Speaker . "'>Stergere</a></td>";
+                            }
+                            echo "</tr>";
                         }
                     echo"</table>";   
                 }
@@ -51,6 +55,6 @@
             }
         $mysqli->close();
         ?>
-        <a href = "inserare_speaker.php">Adaugarea unei noi inregistrari</a>    
+        <?php if($loggedIn) echo'<a href = "inserare_speaker.php">Adaugarea unei noi inregistrari</a>'?>
     </body>
 </html>
