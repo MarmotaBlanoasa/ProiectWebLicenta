@@ -1,32 +1,85 @@
 <?php
-// We need to use sessions, so you should always start sessions using the below code.
 session_start();
-// If the user is not logged in redirect to the login page...
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: index.php');
-    exit;
-}
+$loggedIn = isset($_SESSION["loggedin"]);
 ?>
-<!DOCTYPE html>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <title>Pagina proiect parolata</title>
-    <link href="style.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet"
-          href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <title>Vizualizare evenimente</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 </head>
-<body class="loggedin">
-<nav class="navtop">
-    <div>
-        <h1>TITLU WEBSITE</h1>
-        <a href="profile.php"><i class="fas fa-usercircle"></i>Profile</a>
-        <a href="logout.php"><i class="fas fa-sign-outalt"></i>Logout</a>
-    </div>
-</nav>
-<div class="content">
-    <h2>Pagina cu parola</h2>
-    <p>Bine ati revenit, <?=$_SESSION['email']?>!</p>
-</div>
+
+<body>
+<h1>Lista evenimente</h1>
+<?php
+echo "<ul>";
+if (isset($_SESSION["loggedin"])) {
+    echo "<li>
+<a href='profil.php'>
+Profil
+</a>
+</li>
+<li>
+<a href='vizualizare_pachet.php'>
+Pachete
+</a>
+</li>";
+}
+echo "
+<li>
+<a href='vizualizare_partener.php'>
+Parteneri
+</a>
+</li>
+<li>
+<a href='vizualizare_speaker.php'>
+Speakerii nostrii
+</a>
+</li>";
+echo "</ul>";
+?>
+<?php
+include("conectare.php");
+if ($result = $mysqli->query("SELECT * FROM eveniment ORDER BY ID_Eveniment")) {
+    if ($result->num_rows > 0) {
+        echo "<table border='1' cellpadding='10'>";
+        if ($loggedIn) {
+            echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th><th></th><th></th></tr>";
+        } else {
+            echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th</tr>";
+        }
+
+        while ($row = $result->fetch_object()) {
+            echo "<tr>";
+            echo "<td>" . $row->ID_Eveniment . "</td>";
+            echo "<td>" . $row->Nume_Eveniment . "</td>";
+            echo "<td>" . $row->Descriere . "</td>";
+            echo "<td>" . $row->Data_Start . "</td>";
+            echo "<td>" . $row->Data_Finish . "</td>";
+            echo "<td>" . $row->Locatie . "</td>";
+            echo "<td>" . $row->Numar_Participant_Maxim . "</td>";
+            if ($loggedIn) {
+                echo "<td><a href='modificare_eveniment.php?ID_Eveniment=" . $row->ID_Eveniment . "'>Modificare</a></td>";
+                echo "<td><a href='stergere_eveniment.php?ID_Eveniment=" . $row->ID_Eveniment . "'>Stergere</a></td>";
+                echo "<td><a href='cumpara-bilet.php?ID_Eveniment=" . $row->ID_Eveniment . "'>Cumpara Bilet</a></td>";
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "Nu sunt inregistrari in tabela!";
+    }
+
+} else {
+    echo "Error: " . $mysqli->error();
+}
+$mysqli->close();
+
+if($loggedIn) echo '<a href="inserare_eveniment.php">Adaugarea unei noi inregistrari</a>';
+?>
+
 </body>
+
 </html>

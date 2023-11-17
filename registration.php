@@ -37,7 +37,7 @@ if ($stmt = $mysqli->prepare('SELECT ID_Administrator FROM administrator WHERE E
             $stmt->bind_param('ssss', $_POST["name"], $_POST['surname'], $_POST['email'], $password);
             $stmt->execute();
             echo 'Inregistrare reusita!';
-            header('Location: index.html');
+            header('Location: login.html');
             exit();
         } else {
             echo 'Eroare la pregatirea statement-ului SQL!';
