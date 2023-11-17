@@ -9,7 +9,12 @@
     <p><b>Toate înregistrările din partener</b></p>
     <?php
     include("conectare.php");
-    if ($result = $mysqli->query("SELECT * FROM partener ORDER BY ID_Partener" )) {
+    $query = "SELECT partener.*, eveniment.Nume_Eveniment, pachet.Nume_Pachet FROM partener 
+              LEFT JOIN eveniment ON partener.ID_Eveniment = eveniment.ID_Eveniment 
+              LEFT JOIN pachet ON partener.ID_Pachet = pachet.ID_Pachet 
+              ORDER BY ID_Partener";
+
+    if ($result = $mysqli->query($query)) {
         if ($result->num_rows > 0) {
             echo "<table border='1' cellpadding='10'>";
             echo "<tr>
@@ -19,11 +24,11 @@
                     <th>Contact Nume</th>
                     <th>Contact Email</th>
                     <th>Contact Telefon</th>
-                    <th>ID_Eveniment</th>
-                    <th>ID_Pachet</th>
+                    <th>Eveniment</th>
+                    <th>Pachet</th>
                     <th></th>
                     <th></th>
-                </tr>";
+                  </tr>";
 
             while ($row = $result->fetch_object()) {
                 echo "<tr>";
@@ -33,8 +38,8 @@
                 echo "<td>" . $row->Contact_Nume . "</td>";
                 echo "<td>" . $row->Contact_Email . "</td>";
                 echo "<td>" . $row->Contact_Telefon . "</td>";
-                echo "<td>" . $row->ID_Eveniment . "</td>"; 
-                echo "<td>" . $row->ID_Pachet . "</td>"; 
+                echo "<td>" . $row->Nume_Eveniment . "</td>"; 
+                echo "<td>" . $row->Nume_Pachet . "</td>"; 
                 echo "<td><a href='modificare_partener.php?ID_Partener=" . $row->ID_Partener . "'>Modificare</a></td>";
                 echo "<td><a href='stergere_partener.php?ID_Partener=" . $row->ID_Partener . "'>Ștergere</a></td>";
                 echo "</tr>";
