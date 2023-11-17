@@ -1,57 +1,49 @@
 <?php
-// connectare bazadedate 
 include("conectare.php");
-
-//Modificare datelor 
-// se preia id din pagina vizualizare 
 $error = '';
 
-if (!empty($_POST['ID_Sesiune'])) {
-    if (isset($_POST['submit'])) {
-        // verificam daca id-ul din URL este unul valid  
-        if (is_numeric($_POST['ID_Sesiune'])) {
-            // preluam variabilele din URL/form  
-            $ID_Sesiune = $_POST['ID_Sesiune'];
-            $ID_Eveniment = htmlentities($_POST['ID_Eveniment'], ENT_QUOTES);
-            $Nume_Sesiune = htmlentities($_POST['Nume_Sesiune'], ENT_QUOTES);
+// Extrage lista de evenimente
+$resultEveniment = $mysqli->query("SELECT ID_Eveniment, Nume_Eveniment FROM eveniment");
+$evenimente = $resultEveniment->fetch_all(MYSQLI_ASSOC);
 
-            // verificam daca numele, prenumele, an si grupa nu sunt goale  
-            if ( $ID_Eveniment == '' || $Nume_Sesiune == '') {
-                // daca sunt goale afisam mesaj de eroare    
-                echo "<div> ERROR: Completati campurile obligatorii!</div>";
-            } else {
-                // daca nu sunt erori se face update  name, code, image, price, descriere, categorie  
-                if ($stmt = $mysqli->prepare("UPDATE sesiune SET ID_Eveniment=?,Nume_Sesiune=? WHERE ID_Sesiune='" . $ID_Sesiune . "'")) {
-                    $stmt->bind_param("ss",  $ID_Eveniment, $Nume_Sesiune);
-                    $stmt->execute();
-                    $stmt->close();
-                } // mesaj de eroare in caz ca nu se poate face update    
-                else {
-                    echo "ERROR: nu se poate executa update.";
-                }
-            }
-        }
-        // daca variabila 'id' nu este valida, afisam mesaj de eroare 
-        else {
-            echo "id incorect!";
+if (isset($_POST['submit']) && is_numeric($_POST['ID_Sesiune'])) {
+    $ID_Sesiune = $_POST['ID_Sesiune'];
+    $ID_Eveniment = htmlentities($_POST['ID_Eveniment'], ENT_QUOTES);
+    $Nume_Sesiune = htmlentities($_POST['Nume_Sesiune'], ENT_QUOTES);
+
+    if ($ID_Eveniment == '' || $Nume_Sesiune == '') {
+        $error = 'ERROR: Campuri goale!';
+    } else {
+        if ($stmt = $mysqli->prepare("UPDATE sesiune SET ID_Eveniment=?, Nume_Sesiune=? WHERE ID_Sesiune=?")) {
+            $stmt->bind_param("isi", $ID_Eveniment, $Nume_Sesiune, $ID_Sesiune);
+            $stmt->execute();
+            $stmt->close();
+            header("Location: vizualizare_sesiune.php");
+            exit;
+        } else {
+            $error = "ERROR: Nu se poate executa update.";
         }
     }
+} elseif (isset($_GET['ID_Sesiune']) && is_numeric($_GET['ID_Sesiune'])) {
+    $ID_Sesiune = $_GET['ID_Sesiune'];
+    if ($result = $mysqli->query("SELECT * FROM sesiune WHERE ID_Sesiune = $ID_Sesiune")) {
+        $sesiune = $result->fetch_assoc();
+    } else {
+        $error = "Nu s-au putut prelua datele.";
+    }
 }
+
+$mysqli->close();
 ?>
 
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-
 <head>
-    <title> <?php if ($_GET['ID_Sesiune'] != '') {
-                echo "Modificare inregistrare";
-            } ?> </title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+    <title>Modificare Înregistrare Sesiune</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 </head>
-
 <body>
-    <h1><?php if ($_GET['ID_Sesiune'] != '') {
-            echo "Modificare Inregistrare";
-        } ?></h1>
+    <h1>Modificare Înregistrare Sesiune</h1>
 
     <?php if ($error != '') {
         echo "<div style='padding:4px; border:1px solid red; color:red'>" . $error . "</div>";
@@ -59,23 +51,20 @@ if (!empty($_POST['ID_Sesiune'])) {
 
     <form action="" method="post">
         <div>
-            <?php if ($_GET['ID_Sesiune'] != '') { ?>
-                <input type="hidden" name="ID_Sesiune" value="<?php echo $_GET['ID_Sesiune']; ?>" />
-                <p>ID: <?php echo $_GET['ID_Sesiune'];
-                        if ($result = $mysqli->query("SELECT * FROM sesiune where ID_Sesiune='" . $_GET['ID_Sesiune'] . "'")) {
-                            if ($result->num_rows > 0) {
-                                $row = $result->fetch_object(); ?></p>
-                                <strong>ID Eveniment: </strong> <input type="text" name="ID_Eveniment" value="<?php echo $row->ID_Eveniment; ?>" /><br />
-                                <strong>Nume Sesiune: </strong> <input type="text" name="Nume_Sesiune" value="<?php echo $row->Nume_Sesiune; ?>" /><br />
-            <?php }
-                        }
-                    } ?>
-            <br />
+            <input type="hidden" name="ID_Sesiune" value="<?php echo $sesiune['ID_Sesiune']; ?>" />
+            <strong>Eveniment: </strong>
+            <select name="ID_Eveniment">
+                <?php foreach ($evenimente as $eveniment) {
+                    $selected = $eveniment['ID_Eveniment'] == $sesiune['ID_Eveniment'] ? 'selected' : '';
+                    echo "<option value='" . $eveniment['ID_Eveniment'] . "' $selected>" . $eveniment['Nume_Eveniment'] . "</option>";
+                } ?>
+            </select><br />
+            <strong>Nume Sesiune: </strong> <input type="text" name="Nume_Sesiune" value="<?php echo $sesiune['Nume_Sesiune']; ?>" /><br />
             <br />
             <input type="submit" name="submit" value="Submit" />
             <a href="vizualizare_sesiune.php">Index</a>
         </div>
     </form>
 </body>
-
 </html>
+
