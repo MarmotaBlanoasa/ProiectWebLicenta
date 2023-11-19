@@ -54,6 +54,11 @@ Speakerii nostrii
 </a>
 </li>
 <li>
+<a href='vizualizare_speaker_sesiune.php'>
+Speakerii care se regăsesc la sesiuni
+</a>
+</li>
+<li>
 <a href='vizualizare_bilet.php'>
 Bilete
 </a>
