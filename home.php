@@ -46,7 +46,7 @@ if ($result = $mysqli->query("SELECT * FROM eveniment ORDER BY ID_Eveniment")) {
     if ($result->num_rows > 0) {
         echo "<table border='1' cellpadding='10'>";
         if ($loggedIn) {
-            echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th><th></th><th></th></tr>";
+            echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th><th></th><th></th><th></th></tr>";
         } else {
             echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th</tr>";
         }

@@ -4,8 +4,8 @@ include("conectare.php");
 $error = '';
 
 if (isset($_POST['submit'])) {
-    $tip_bilet = htmlentities($_POST['tip_bilet'], ENT_QUOTES);
-    $pret_bilet = htmlentities($_POST['pret_bilet'], ENT_QUOTES);
+    $tip_bilet = htmlentities($_POST['Tip_Bilet'], ENT_QUOTES);
+    $pret_bilet = htmlentities($_POST['Pret'], ENT_QUOTES);
     $id_eveniment = htmlentities($_POST['id_eveniment'], ENT_QUOTES);
     $id_participant = htmlentities($_POST['id_participant'], ENT_QUOTES);
 
@@ -46,20 +46,38 @@ $mysqli->close();
     <input type="hidden" name="id_participant" value="1" />
     <div>
         <strong>Tip bilet:</strong> <label>
-            <select name="tip_bilet" >
+            <select name="Tip_Bilet" id="Tip_Bilet">
                 <option value="Normal">Normal</option>
                 <option value="VIP">VIP</option>
             </select>
         </label><br />
         <strong>Pret:</strong> <label>
-            <input type="text" name="pret_bilet" />
+            <input type="text" name="Pret" id="Pret" readonly />
         </label><br />
         <br />
         <button type="submit" name="submit" value="Submit" >
             Cumpara bilet
         </button>
+        <a href="home.php">Index</a>
     </div>
 </form>
+<script>
+    function updatePrice() {
+        var pretStandard = {
+            'Normal': 200,
+            'VIP': 300,
+        };
+        var tipBiletSelectat = document.getElementById('Tip_Bilet').value;
+        document.getElementById('Pret').value = pretStandard[tipBiletSelectat];
+    }
+
+    // Actualizează prețul la încărcarea paginii
+    window.onload = updatePrice;
+
+    // Continuă să actualizezi prețul la schimbarea selecției
+    document.getElementById('Tip_Bilet').addEventListener('change', updatePrice);
+</script>
+
 </body>
 
 </html>
