@@ -1,4 +1,6 @@
 <?php
+session_start();
+include("conectare.php");
 if (isset($_COOKIE['ticket_ids'])) {
     $ticketIds = explode(',', $_COOKIE['ticket_ids']);
 
@@ -16,21 +18,22 @@ if (isset($_COOKIE['ticket_ids'])) {
         // Fetch the results
         $result = $stmt->get_result();
         $totalPrice = 0;
-        echo "<h2>Your Ticket Cart</h2>";
+        echo "<h2>Cos bilete</h2>";
         echo "<ul>";
 
         while ($row = $result->fetch_assoc()) {
-            echo "<li>Event ID: " . htmlspecialchars($row['ID_Eveniment']) . ", Ticket Type: " . htmlspecialchars($row['Tip_Bilet']) . ", Price: $" . htmlspecialchars($row['Pret']) . "</li>";
+            echo "<li>ID Eveniment: " . htmlspecialchars($row['ID_Eveniment']) . ", Tip bilet: " . htmlspecialchars($row['Tip_Bilet']) . ", pret: $" . htmlspecialchars($row['Pret']) . "</li>";
             $totalPrice += $row['Pret'];
         }
 
         echo "</ul>";
-        echo "<p>Total Payment: $" . htmlspecialchars($totalPrice) . "</p>";
+        echo "<p>Total Plata: $" . htmlspecialchars($totalPrice) . "</p>";
+        echo "<a href='checkout.html'>Plateste</a>";
 
         $stmt->close();
     } else {
         echo "Error in query: " . $mysqli->error;
     }
 } else {
-    echo "<p>No tickets in your cart.</p>";
+    echo "<p>Niciun bilet adaugat in cos.</p>";
 }

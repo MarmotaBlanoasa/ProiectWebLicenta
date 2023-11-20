@@ -6,14 +6,14 @@ $error = '';
 if (isset($_POST['submit'])) {
     $tip_bilet = htmlentities($_POST['Tip_Bilet'], ENT_QUOTES);
     $pret_bilet = htmlentities($_POST['Pret'], ENT_QUOTES);
-    $id_eveniment = htmlentities($_POST['id_eveniment'], ENT_QUOTES);
+    $id_eveniment = $_GET['ID_Eveniment'];
     $id_participant = htmlentities($_POST['id_participant'], ENT_QUOTES);
-
+    $email = htmlentities($_POST['email'], ENT_QUOTES);
     if ($tip_bilet == '' || $pret_bilet == '' || $id_participant == '') {
         $error = 'ERROR: Toate campurile sunt obligatorii!';
     } else {
         if ($stmt = $mysqli->prepare("INSERT INTO bilet (Tip_Bilet, Pret,ID_Eveniment,ID_Participant) VALUES (?, ?, ?, ?)")) {
-            $stmt->bind_param("siii", $tip_bilet, $pret_bilet, $id_participant, $id_participant);
+            $stmt->bind_param("siii", $tip_bilet, $pret_bilet, $id_eveniment, $id_participant);
             if ($stmt->execute()) {
                 $lastInsertedId = $mysqli->insert_id;
 
@@ -25,6 +25,7 @@ if (isset($_POST['submit'])) {
 
                 // Save the updated ticket IDs back to the cookie
                 setcookie('ticket_ids', implode(',', $ticketIds), time() + (86400 * 30), "/"); // 30-day cookie
+//                include 'sendMail.php';
                 echo "<div>Bilet cumparat cu success</div>";
             } else {
                 $error = "ERROR: Nu se poate executa insert. " . $mysqli->error;
@@ -65,6 +66,9 @@ $mysqli->close();
             <input type="text" name="Pret" id="Pret" readonly />
         </label><br />
         <br />
+        <label>
+            <input type="text" name="email" placeholder="email" required>
+        </label>
         <button type="submit" name="submit" value="Submit" >
             Cumpara bilet
         </button>
