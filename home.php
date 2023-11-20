@@ -8,15 +8,15 @@ $loggedIn = isset($_SESSION["loggedin"]);
 
 <head>
     <title>Vizualizare evenimente</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 </head>
 
 <body>
-    <h1>Lista evenimente</h1>
-    <?php
-    echo "<ul>";
-    if (isset($_SESSION["loggedin"])) {
-        echo "<li>
+<h1>Lista evenimente</h1>
+<?php
+echo "<ul>";
+if ($loggedIn) {
+    echo "<li>
 <a href='profil.php'>
 Profil
 </a>
@@ -26,8 +26,8 @@ Profil
 Pachete
 </a>
 </li>";
-    }
-    echo "
+}
+echo "
 <li>
 <a href='vizualizare_eveniment.php'>
 Evenimentele noastre
@@ -59,7 +59,7 @@ Speakerii care se regăsesc la sesiuni
 </a>
 </li>
 <li>
-<a href='vizualizare_bilet.php'>
+<a href='cos-bilete.php'>
 Bilete
 </a>
 </li>
@@ -67,48 +67,47 @@ Bilete
 <a href='vizualizare_agenda.php'>
 Agenda Evenimentului
 </a>
-</li>"
-;
-    echo "</ul>";
-    ?>
-    <?php
-    include("conectare.php");
-    if ($result = $mysqli->query("SELECT * FROM eveniment ORDER BY ID_Eveniment")) {
-        if ($result->num_rows > 0) {
-            echo "<table border='1' cellpadding='10'>";
-            if ($loggedIn) {
-                echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th><th></th><th></th><th></th></tr>";
-            } else {
-                echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locatie</th><th>Numar Participanti Maxim</th</tr>";
-            }
+</li>";
+echo "</ul>";
+?>
+<?php
+include("conectare.php");
+require_once "EventCRUD.php";
+$loggedIn = isset($_SESSION["loggedin"]);
+$eventCRUD = new EventCRUD();
+try {
+    $events = $eventCRUD->getAllEvents();
+} catch (Exception $e) {
+    echo "<p>Could not connect to the database to display events!</p>";
+    exit();
+}
+if (!empty($events)) {
+    echo "<table>";
+    echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locație</th><th>Număr Participanți Maxim</th><th>Modificare</th><th>Stergere</th><th>Cumpără Bilet</th></tr>";
 
-            while ($row = $result->fetch_object()) {
-                echo "<tr>";
-                echo "<td>" . $row->ID_Eveniment . "</td>";
-                echo "<td>" . $row->Nume_Eveniment . "</td>";
-                echo "<td>" . $row->Descriere . "</td>";
-                echo "<td>" . $row->Data_Start . "</td>";
-                echo "<td>" . $row->Data_Finish . "</td>";
-                echo "<td>" . $row->Locatie . "</td>";
-                echo "<td>" . $row->Numar_Participant_Maxim . "</td>";
-                if ($loggedIn) {
-                    echo "<td><a href='modificare_eveniment.php?ID_Eveniment=" . $row->ID_Eveniment . "'>Modificare</a></td>";
-                    echo "<td><a href='stergere_eveniment.php?ID_Eveniment=" . $row->ID_Eveniment . "'>Stergere</a></td>";
-                    echo "<td><a href='cumpara-bilet.php?ID_Eveniment=" . $row->ID_Eveniment . "'>Cumpara Bilet</a></td>";
-                }
-                echo "</tr>";
-            }
-            echo "</table>";
-        } else {
-            echo "Nu sunt inregistrari in tabela!";
-        }
-    } else {
-        echo "Error: " . $mysqli->error();
+    foreach ($events as $row) {
+        echo "<tr>";
+        echo "<td>" . htmlspecialchars($row['ID_Eveniment']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['Nume_Eveniment']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['Descriere']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['Data_Start']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['Data_Finish']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['Locatie']) . "</td>";
+        echo "<td>" . htmlspecialchars($row['Numar_Participant_Maxim']) . "</td>";
+        echo "<td><a href='modificare_eveniment.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Modificare</a></td>";
+        echo "<td><a href='stergere_eveniment.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Stergere</a></td>";
+        echo "<td><a href='cumpara-bilet.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Cumpără Bilet</a></td>";
+        echo "</tr>";
     }
-    $mysqli->close();
-
-    if ($loggedIn) echo '<a href="inserare_eveniment.php">Adaugarea unei noi inregistrari</a>';
-    ?>
+    echo "</table>";
+} else {
+    echo "<p>No events scheduled</p>";
+}
+$mysqli->close();
+if ($loggedIn) {
+    echo '<a href="inserare_eveniment.php">Adăugarea unei noi înregistrări</a>';
+}
+?>
 
 </body>
 
