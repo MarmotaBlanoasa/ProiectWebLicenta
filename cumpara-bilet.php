@@ -15,6 +15,16 @@ if (isset($_POST['submit'])) {
         if ($stmt = $mysqli->prepare("INSERT INTO bilet (Tip_Bilet, Pret,ID_Eveniment,ID_Participant) VALUES (?, ?, ?, ?)")) {
             $stmt->bind_param("siii", $tip_bilet, $pret_bilet, $id_participant, $id_participant);
             if ($stmt->execute()) {
+                $lastInsertedId = $mysqli->insert_id;
+
+                // Retrieve existing ticket IDs from cookie
+                $ticketIds = isset($_COOKIE['ticket_ids']) ? explode(',', $_COOKIE['ticket_ids']) : [];
+
+                // Add the new ticket ID
+                $ticketIds[] = $lastInsertedId;
+
+                // Save the updated ticket IDs back to the cookie
+                setcookie('ticket_ids', implode(',', $ticketIds), time() + (86400 * 30), "/"); // 30-day cookie
                 echo "<div>Bilet cumparat cu success</div>";
             } else {
                 $error = "ERROR: Nu se poate executa insert. " . $mysqli->error;
@@ -63,11 +73,11 @@ $mysqli->close();
 </form>
 <script>
     function updatePrice() {
-        var pretStandard = {
+        const pretStandard = {
             'Normal': 200,
             'VIP': 300,
         };
-        var tipBiletSelectat = document.getElementById('Tip_Bilet').value;
+        const tipBiletSelectat = document.getElementById('Tip_Bilet').value;
         document.getElementById('Pret').value = pretStandard[tipBiletSelectat];
     }
 
