@@ -52,11 +52,6 @@ Speakerii nostrii
 <a href='cos-bilete.php'>
 Bilete
 </a>
-</li>
-<li>
-<a href='vizualizare_agenda.php'>
-Agenda Evenimentului
-</a>
 </li>";
 echo "</ul>";
 ?>
