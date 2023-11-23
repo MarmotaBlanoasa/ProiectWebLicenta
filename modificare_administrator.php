@@ -1,4 +1,5 @@
 <?php
+session_start();
 // connectare bazadedate 
 include("conectare.php");
 include "checkLogin.php";

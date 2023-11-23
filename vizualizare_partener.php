@@ -1,6 +1,5 @@
 <?php
 session_start();
-require("checkLogin.php");
 include("conectare.php");
 require_once "EventCRUD.php";
 ?>
@@ -25,7 +24,6 @@ $parteneri = $eventCRUD->getPartners();
                     <th>Contact Nume</th>
                     <th>Contact Email</th>
                     <th>Contact Telefon</th>
-                    <th>Eveniment</th>
                     <th>Pachet</th>
                     <th></th>
                     <th></th>

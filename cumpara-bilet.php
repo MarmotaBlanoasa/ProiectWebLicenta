@@ -63,7 +63,8 @@ $mysqli->close();
             </select>
         </label><br />
         <strong>Pret:</strong> <label>
-            <input type="text" name="Pret" id="Pret" readonly />
+            <input type="hidden" name="Pret" id="Pret" readonly />
+            <p id="PretParagraf"></p>
         </label><br />
         <br />
         <label>
@@ -83,6 +84,7 @@ $mysqli->close();
         };
         const tipBiletSelectat = document.getElementById('Tip_Bilet').value;
         document.getElementById('Pret').value = pretStandard[tipBiletSelectat];
+        document.getElementById('PretParagraf').innerHTML = pretStandard[tipBiletSelectat];
     }
 
     // Actualizează prețul la încărcarea paginii
