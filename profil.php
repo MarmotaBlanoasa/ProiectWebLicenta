@@ -8,7 +8,7 @@ require ("checkLogin.php");
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Pagina proiect parolata</title>
+    <title>Dashboard Admin</title>
     <link href="style.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet"
           href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
@@ -16,8 +16,9 @@ require ("checkLogin.php");
 <body class="loggedin">
 <nav class="navtop">
     <div>
-        <h1>TITLU WEBSITE</h1>
+        <h1>Profil</h1>
         <a href="home.php"><i class="fas fa-sign-outalt"></i>Home</a>
+        <a href="modificare_administrator.php?id=<?=$_SESSION['id']?>"><i class="fas fa-sign-outalt"></i>Editeaza profil</a>
         <a href="logout.php"><i class="fas fa-sign-outalt"></i>Logout</a>
     </div>
 </nav>

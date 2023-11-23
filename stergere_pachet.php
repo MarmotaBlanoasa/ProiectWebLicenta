@@ -1,14 +1,11 @@
 <?php
 include("conectare.php");
-
+require_once "EventCRUD.php";
+$eventCRUD = new EventCRUD();
 if (isset($_GET['ID_Pachet']) && is_numeric($_GET['ID_Pachet'])) {
-    $ID_Pachet = $_GET['ID_Pachet'];
-
-    
-    if ($stmt = $mysqli->prepare("DELETE FROM pachet WHERE ID_Pachet=? LIMIT 1")) {
-        $stmt->bind_param("i", $ID_Pachet);
-        $stmt->execute();
-        $stmt->close();
+    $delete = $eventCRUD->deletPacketByID($_GET['ID_Pachet']);
+    if ($delete) {
+        header("Location: vizualizare_pachet.php");
     } else {
         echo "error: nu se poate executa delete.";
         $mysqli->close();

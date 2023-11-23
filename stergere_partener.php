@@ -1,20 +1,15 @@
 <?php
 include("conectare.php");
-
+include "checkLogin.php";
+require_once "EventCRUD.php";
 if (isset($_GET['ID_Partener']) && is_numeric($_GET['ID_Partener'])) {
-    $ID_Partener = $_GET['ID_Partener'];
-
-    
-    if ($stmt = $mysqli->prepare("DELETE FROM partener WHERE ID_Partener=? LIMIT 1")) {
-        $stmt->bind_param("i", $ID_Partener);
-        $stmt->execute();
-        $stmt->close();
-    } else {
+    $eventCRUD = new EventCRUD();
+    $delete = $eventCRUD->deletePartnerByID($_GET['ID_Partener']);
+    if (!$delete) {
         echo "error: nu se poate executa delete.";
         $mysqli->close();
-    echo "<div>Inregistrarea a fost stearsa</div>";
     }
-
+    header("Location: vizualizare_partener.php");
     echo "<p><a href=\"vizualizare_partener.php\">Index</a></p>";
 }
 ?>

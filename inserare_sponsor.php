@@ -1,10 +1,13 @@
 <?php
+session_start();
+include 'checkLogin.php';
 include("conectare.php");
+require_once 'EventCRUD.php';
 $error = '';
 
-// Extrage lista de evenimente
-$resultEveniment = $mysqli->query("SELECT ID_Eveniment, Nume_Eveniment FROM eveniment");
-$evenimente = $resultEveniment->fetch_all(MYSQLI_ASSOC);
+// Fetch the list of events
+$eventCRUD = new EventCRUD();
+$evenimente = $eventCRUD->getAllEvents();
 
 if (isset($_POST['submit'])) {
     $Nume_Sponsor = htmlentities($_POST['Nume_Sponsor'], ENT_QUOTES);
@@ -17,16 +20,9 @@ if (isset($_POST['submit'])) {
     if ($Nume_Sponsor == '' || $Descriere == '' || $Contact_Nume == '' || $Contact_Email == '' || $Contact_Telefon == '' || $ID_Eveniment == '') {
         $error = 'ERROR: Toate campurile sunt obligatorii!';
     } else {
-        if ($stmt = $mysqli->prepare("INSERT INTO sponsor (Nume_Sponsor, Descriere, Contact_Nume, Contact_Email, Contact_Telefon, ID_Eveniment) VALUES (?, ?, ?, ?, ?, ?)")) {
-            $stmt->bind_param("sssssi", $Nume_Sponsor, $Descriere, $Contact_Nume, $Contact_Email, $Contact_Telefon, $ID_Eveniment);
-            if ($stmt->execute()) {
-                echo "<div>Inregistrarea sponsorului a fost adaugata cu succes!</div>";
-            } else {
-                $error = "ERROR: Nu se poate executa insert. " . $mysqli->error;
-            }
-            $stmt->close();
-        } else {
-            $error = "ERROR: Nu se poate pregati insert. " . $mysqli->error;
+        $result = $eventCRUD->addSponsor($Nume_Sponsor, $Descriere, $Contact_Nume, $Contact_Email, $Contact_Telefon, $ID_Eveniment);
+        if (!$result) {
+            echo "ERROR: Nu se poate executa insert.";
         }
     }
 }

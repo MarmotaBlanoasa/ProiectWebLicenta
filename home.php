@@ -27,17 +27,12 @@ Pachete
 </a>
 </li>";
 }
+if (!$loggedIn) {
+    echo "<a href='login.html'>
+        Login
+    </a>";
+}
 echo "
-<li>
-<a href='vizualizare_eveniment.php'>
-Evenimentele noastre
-</a>
-</li>
-<li>
-<a href='vizualizare_sesiune.php'>
-Sesiunile Evenimentelor
-</a>
-</li>
 <li>
 <a href='vizualizare_partener.php'>
 Parteneri
@@ -51,11 +46,6 @@ Sponsori
 <li>
 <a href='vizualizare_speaker.php'>
 Speakerii nostrii
-</a>
-</li>
-<li>
-<a href='vizualizare_speaker_sesiune.php'>
-Speakerii care se regăsesc la sesiuni
 </a>
 </li>
 <li>
@@ -83,7 +73,7 @@ try {
 }
 if (!empty($events)) {
     echo "<table>";
-    echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locație</th><th>Număr Participanți Maxim</th><th>Modificare</th><th>Stergere</th><th>Cumpără Bilet</th></tr>";
+    echo "<tr><th>ID Eveniment</th><th>Nume Eveniment</th><th>Descriere</th><th>Data Start</th><th>Data Finish</th><th>Locație</th><th>Număr Participanți Maxim</th><th>Modificare</th><th>Stergere</th><th>Cumpără Bilet</th>><th>Mai multe detalii</th></tr>";
 
     foreach ($events as $row) {
         echo "<tr>";
@@ -94,9 +84,12 @@ if (!empty($events)) {
         echo "<td>" . htmlspecialchars($row['Data_Finish']) . "</td>";
         echo "<td>" . htmlspecialchars($row['Locatie']) . "</td>";
         echo "<td>" . htmlspecialchars($row['Numar_Participant_Maxim']) . "</td>";
-        echo "<td><a href='modificare_eveniment.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Modificare</a></td>";
-        echo "<td><a href='stergere_eveniment.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Stergere</a></td>";
+        if ($loggedIn) {
+            echo "<td><a href='modificare_eveniment.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Modificare</a></td>";
+            echo "<td><a href='stergere_eveniment.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Stergere</a></td>";
+        }
         echo "<td><a href='cumpara-bilet.php?ID_Eveniment=" . urlencode($row['ID_Eveniment']) . "'>Cumpără Bilet</a></td>";
+        echo "<td><a href='vizualizare-eveniment.php?ID_Eveniment=" . $row['ID_Eveniment'] . "'>Vezi detalii</a></td>";
         echo "</tr>";
     }
     echo "</table>";

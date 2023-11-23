@@ -2,50 +2,58 @@
 <html>
 <head>
     <title>Vizualizare Sponsor</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 </head>
 <body>
-    <h1>Inregistrările din tabela sponsor</h1>
-    <p><b>Toate înregistrările din sponsor</b></p>
-    <?php
-    include("conectare.php");
-    if ($result = $mysqli->query("SELECT sponsor.*, eveniment.Nume_Eveniment FROM sponsor LEFT JOIN eveniment ON sponsor.ID_Eveniment = eveniment.ID_Eveniment ORDER BY ID_Sponsor")) {
-        if ($result->num_rows > 0) {
-            echo "<table border='1' cellpadding='10'>";
-            echo "<tr>
+<h1>Inregistrările din tabela sponsor</h1>
+<p><b>Toate înregistrările din sponsor</b></p>
+<?php
+session_start();
+include("conectare.php");
+require_once "EventCRUD.php";
+$loggedIn = isset($_SESSION["loggedin"]);
+$eventCRUD = new EventCRUD();
+try {
+    $sponsor = $eventCRUD->getAllSponsors();
+} catch (Exception $e) {
+    echo "<p>Could not connect to the database to display events!</p>";
+    exit();
+}
+
+if (!empty($sponsor)) {
+    echo "<table border='1' cellpadding='10'>";
+    echo "<tr>
                     <th>ID Sponsor</th>
                     <th>Nume Sponsor</th>
                     <th>Descriere</th>
                     <th>Contact Nume</th>
                     <th>Contact Email</th>
                     <th>Contact Telefon</th>
-                    <th>Eveniment</th>
                     <th></th>
                     <th></th>
                 </tr>";
 
-            while ($row = $result->fetch_object()) {
-                echo "<tr>";
-                echo "<td>" . $row->ID_Sponsor . "</td>";
-                echo "<td>" . $row->Nume_Sponsor . "</td>";
-                echo "<td>" . $row->Descriere . "</td>";
-                echo "<td>" . $row->Contact_Nume . "</td>";
-                echo "<td>" . $row->Contact_Email . "</td>";
-                echo "<td>" . $row->Contact_Telefon . "</td>";
-                echo "<td>" . $row->Nume_Eveniment . "</td>";  
-                echo "<td><a href='modificare_sponsor.php?ID_Sponsor=" . $row->ID_Sponsor . "'>Modificare</a></td>";
-                echo "<td><a href='stergere_sponsor.php?ID_Sponsor=" . $row->ID_Sponsor . "'>Ștergere</a></td>";
-                echo "</tr>";
-            }
-            echo "</table>";
-        } else {
-            echo "Nu sunt înregistrări în tabelă!";
+    foreach ($sponsor as $row) {
+        echo "<tr>";
+        echo "<td>" . $row['ID_Sponsor'] . "</td>";
+        echo "<td>" . $row['Nume_Sponsor'] . "</td>";
+        echo "<td>" . $row['Descriere'] . "</td>";
+        echo "<td>" . $row['Contact_Nume'] . "</td>";
+        echo "<td>" . $row['Contact_Email'] . "</td>";
+        echo "<td>" . $row['Contact_Telefon'] . "</td>";
+        if ($loggedIn){
+            echo "<td><a href='modificare_sponsor.php?ID_Sponsor=" . $row['ID_Sponsor'] . "'>Modificare</a></td>";
+            echo "<td><a href='stergere_sponsor.php?ID_Sponsor=" . $row['ID_Sponsor'] . "'>Ștergere</a></td>";
         }
-    } else {
-        echo "Eroare: " . $mysqli->error;
+        echo "</tr>";
+        echo "</tr>";
     }
-    $mysqli->close();
-    ?>
-    <a href="inserare_sponsor.php">Adăugarea unui nou sponsor</a>
+    echo "</table>";
+} else {
+    echo "Nu sunt înregistrări în tabelă!";
+}
+$mysqli->close();
+?>
+<?= $loggedIn ?  '<a href="inserare_sponsor.php">Adăugarea unui nou sponsor</a>': '' ?>
 </body>
 </html>

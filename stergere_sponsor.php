@@ -1,20 +1,15 @@
 <?php
 include("conectare.php");
-
+include "checkLogin.php";
+require_once "EventCRUD.php";
 if (isset($_GET['ID_Sponsor']) && is_numeric($_GET['ID_Sponsor'])) {
-    $ID_Sponsor = $_GET['ID_Sponsor'];
-
-    
-    if ($stmt = $mysqli->prepare("DELETE FROM sponsor WHERE ID_Sponsor=? LIMIT 1")) {
-        $stmt->bind_param("i", $ID_Sponsor);
-        $stmt->execute();
-        $stmt->close();
-    } else {
+    $eventCRUD = new EventCRUD();
+    $delete = $eventCRUD->deleteSponsorByID($_GET['ID_Sponsor']);
+    if (!$delete) {
         echo "error: nu se poate executa delete.";
         $mysqli->close();
-    echo "<div>Inregistrarea a fost stearsa</div>";
     }
-
+    header("Location: vizualizare_sponsor.php");
     echo "<p><a href=\"vizualizare_sponsor.php\">Index</a></p>";
 }
 ?>

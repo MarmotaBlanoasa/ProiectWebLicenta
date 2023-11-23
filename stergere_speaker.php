@@ -1,20 +1,15 @@
 <?php
-    include("conectare.php");
-    if (isset($_GET['ID_Speaker']) && is_numeric($_GET['ID_Speaker']))
-    {
-        $ID_Speaker = $_GET['ID_Speaker'];
-        if ($stmt = $mysqli->prepare("DELETE FROM speaker WHERE ID_Speaker = ? LIMIT 1"))
-        {
-            $stmt->bind_param("i",$ID_Speaker);
-            $stmt->execute();
-            $stmt->close();
-        }
-        else
-        {
-            echo "ERROR: Nu se poate executa delete.";
-        }
+include("conectare.php");
+include "checkLogin.php";
+require_once "EventCRUD.php";
+if (isset($_GET['ID_Speaker']) && is_numeric($_GET['ID_Speaker'])) {
+    $eventCRUD = new EventCRUD();
+    $delete = $eventCRUD->deleteSpeakerByID($_GET['ID_Speaker']);
+    if (!$delete) {
+        echo "error: nu se poate executa delete.";
         $mysqli->close();
-        echo "<div>Inregistrarea a fost stearsa!!!!</div>";
     }
+    header("Location: vizualizare_speaker.php");
     echo "<p><a href=\"vizualizare_speaker.php\">Index</a></p>";
+}
 ?>

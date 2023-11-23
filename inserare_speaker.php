@@ -1,32 +1,28 @@
 <?php
-    include("conectare.php");
-    $error = '';
-    if (isset($_POST['submit']))
-    {
-        $Nume = htmlentities($_POST['Nume'], ENT_QUOTES);
-        $Prenume = htmlentities($_POST['Prenume'], ENT_QUOTES);
-        $Email = htmlentities($_POST['Email'], ENT_QUOTES);
-        $Telefon = htmlentities($_POST['Telefon'], ENT_QUOTES);
-        $Bio = htmlentities($_POST['Bio'], ENT_QUOTES);
-        if ($Nume	==''||$Prenume	 == ''|| $Email	==''||$Telefon	 == ''|| $Bio	=='')
-        {
-            $error = 'ERROR:Campuri goale!';
-        }
-        else
-        {
-             if ($stmt = $mysqli->prepare("INSERT into speaker (Nume, Prenume, Email, Telefon, Bio) VALUES ( ?, ?, ?, ?, ?)"))
-            {
-                $stmt->bind_param("sssss",$Nume, $Prenume,$Email, $Telefon,$Bio);
-                $stmt->execute();
-                $stmt->close();
-            }
-            else 
-            {
-                echo "ERROR:Nu se poate executa insert.";
-            }
+session_start();
+include("conectare.php");
+require_once 'EventCRUD.php';
+require 'checkLogin.php';
+$error = '';
+
+if (isset($_POST['submit'])) {
+    $Nume = htmlentities($_POST['Nume'], ENT_QUOTES);
+    $Prenume = htmlentities($_POST['Prenume'], ENT_QUOTES);
+    $Email = htmlentities($_POST['Email'], ENT_QUOTES);
+    $Telefon = htmlentities($_POST['Telefon'], ENT_QUOTES);
+    $Bio = htmlentities($_POST['Bio'], ENT_QUOTES);
+
+    if ($Nume == '' || $Prenume == '' || $Email == '' || $Telefon == '' || $Bio == '') {
+        $error = 'ERROR: Campuri goale!';
+    } else {
+        $eventCRUD = new EventCRUD();
+        $result = $eventCRUD->addSpeaker($Nume, $Prenume, $Email, $Telefon, $Bio);
+        if (!$result) {
+            echo "ERROR: Nu se poate executa insert.";
         }
     }
-    $mysqli->close();
+}
+$mysqli->close();
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>

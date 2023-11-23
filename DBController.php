@@ -67,10 +67,10 @@ class DBController
      *
      * @param string $query SQL query string.
      * @param array $params Parameters for the prepared statement.
-     * @return void
+     * @return boolean
      * @throws Exception
      */
-    public function updateDB(string $query, array $params = []): void
+    public function updateDB(string $query, array $params = []): bool
     {
         $sql_statement = $this->conn->prepare($query);
 
@@ -85,6 +85,7 @@ class DBController
         if (!$sql_statement->execute()) {
             throw new Exception("Failed to execute query: " . $sql_statement->error);
         }
+        return true;
     }
 
     /**
@@ -96,25 +97,38 @@ class DBController
      */
     private function bindParams(mysqli_stmt $sql_statement, array $params): void
     {
-        $param_type = "";
-        foreach ($params as $query_param) {
-            $param_type .= $query_param["param_type"];
+        if (empty($params)) {
+            return; // No parameters to bind, so just return.
         }
 
-        $bind_params = [];
-        $bind_params[] = &$param_type;
+        $paramTypes = '';
+        $bindParams = [];
 
-        foreach ($params as $k => &$query_param) {
-            $bind_params[] = &$query_param['param_value'];
+        foreach ($params as $param) {
+            if (!isset($param['param_type']) || !isset($param['param_value'])) {
+                throw new InvalidArgumentException('Each parameter must have a "param_type" and a "param_value".');
+            }
+
+            $paramTypes .= $param['param_type'];
+            $bindParams[] = &$param['param_value'];
         }
 
-        call_user_func_array([$sql_statement, 'bind_param'], $bind_params);
+        array_unshift($bindParams, $paramTypes); // Prepend the string of types to the beginning of the array.
+
+        if (!call_user_func_array([$sql_statement, 'bind_param'], $bindParams)) {
+            throw new RuntimeException('Failed to bind parameters.');
+        }
     }
+
 
 
     public function closeConnection(): void
     {
         $this->conn->close();
+    }
+    public function getConnection(): mysqli|false
+    {
+        return $this->conn;
     }
 }
 
