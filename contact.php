@@ -1,4 +1,7 @@
 <?php
+if (isset($_POST['submit'])) {
+    echo "Mesaj trimis cu succes!";
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -18,7 +21,7 @@
     <label>
         <input name="message" type="text" placeholder="Your message">
     </label>
-    <button type="submit" name="submit" value="Submit" >
+    <button type="submit" name="submit" value="Submit">
         Trimite
     </button>
 </form>

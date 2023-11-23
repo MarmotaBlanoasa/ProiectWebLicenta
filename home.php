@@ -52,6 +52,11 @@ Speakerii nostrii
 <a href='cos-bilete.php'>
 Bilete
 </a>
+</li>
+<li>
+<a href='contact.php'>
+Contact
+</a>
 </li>";
 echo "</ul>";
 ?>
